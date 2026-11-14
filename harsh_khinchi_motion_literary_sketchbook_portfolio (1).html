@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harsh Khinchi — Motion, Tactile Craft &amp; Poetry Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+            serif: ['Newsreader', 'serif'],
+            editorial: ['Instrument Serif', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: '#0b0a09',
+            charcoal: '#141210',
+            parchment: '#ece7dc',
+            ink: '#2b2721',
+            crimson: '#c83e31',
+            brass: '#b8894a',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-obsidian: #0b0a09;
+      --bg-charcoal: #141210;
+      --parchment: #ece7dc;
+      --parchment-deep: #dfd6c5;
+      --ink: #2b2721;
+      --crimson: #c83e31;
+      --brass: #b8894a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-obsidian);
+      color: #f3efe8;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* Subtle Film Grain Overlay */
+    .film-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 95;
+      opacity: 0.032;
+      background-image: radial-gradient(#ffffff 0.75px, transparent 0.75px);
+      background-size: 4px 4px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0a09;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b2721;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b8894a;
+    }
+
+    /* Giant Editorial Watermark */
+    .giant-wordmark {
+      font-size: clamp(4.2rem, 15.5vw, 17rem);
+      line-height: 0.84;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+      user-select: none;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(243,239,232,0.065) 0%, rgba(243,239,232,0.008) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: rgba(15, 13, 12, 0.84);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* ============================================================
+       3D CURVED-LEAF SKETCHBOOK ENGINE (18-STRIP NESTED CURVATURE)
+       N=18, SPAN=0.449, BETA=0.60, TILT_X=4.5, TILT_Y=7
+       ============================================================ */
+    .sketchbook-stage {
+      perspective: 2600px;
+      transform-style: preserve-3d;
+      position: relative;
+      user-select: none;
+    }
+
+    .sketchbook-rig {
+      transform-style: preserve-3d;
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .book-cover {
+      position: relative;
+      background: linear-gradient(145deg, #2b1d14 0%, #170f0a 58%, #0c0805 100%);
+      border-radius: 20px;
+      box-shadow:
+        0 40px 90px -15px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(184, 137, 74, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12);
+      padding: 15px;
+      transform-style: preserve-3d;
+    }
+
+    /* Brass Corner Clasps */
+    .brass-corner {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border: 2px solid rgba(184, 137, 74, 0.62);
+      pointer-events: none;
+      z-index: 30;
+    }
+    .brass-corner.tl { top: 8px; left: 8px; border-right: none; border-bottom: none; border-top-left-radius: 11px; }
+    .brass-corner.tr { top: 8px; right: 8px; border-left: none; border-bottom: none; border-top-right-radius: 11px; }
+    .brass-corner.bl { bottom: 8px; left: 8px; border-right: none; border-top: none; border-bottom-left-radius: 11px; }
+    .brass-corner.br { bottom: 8px; right: 8px; border-left: none; border-top: none; border-bottom-right-radius: 11px; }
+
+    .book-spread {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10.2;
+      min-height: 450px;
+      max-height: 660px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--parchment-deep);
+      border-radius: 11px;
+      transform-style: preserve-3d;
+      box-shadow: inset 0 0 34px rgba(43, 39, 33, 0.24);
+    }
+
+    /* Central Spine Gutter */
+    .book-spine-gutter {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 48px;
+      transform: translateX(-50%) translateZ(2px);
+      background: linear-gradient(
+        90deg,
+        rgba(35, 22, 12, 0) 0%,
+        rgba(35, 22, 12, 0.16) 32%,
+        rgba(20, 12, 6, 0.38) 50%,
+        rgba(35, 22, 12, 0.16) 68%,
+        rgba(35, 22, 12, 0) 100%
+      );
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    /* Crimson Ribbon Bookmark */
+    .ribbon-bookmark {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      width: 14px;
+      height: calc(100% + 26px);
+      transform: translateX(-50%) translateZ(3px);
+      background: linear-gradient(90deg, #7f1d1d, #c83e31 50%, #7f1d1d);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 94%, 0 100%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.45);
+      z-index: 26;
+      pointer-events: none;
+    }
+
+    /* Parchment Page Base */
+    .parchment-page {
+      position: relative;
+      height: 100%;
+      padding: clamp(18px, 3vw, 38px);
+      color: var(--ink);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: var(--parchment);
+      background-image:
+        radial-gradient(rgba(120, 90, 50, 0.085) 1px, transparent 0),
+        radial-gradient(rgba(80, 55, 25, 0.05) 1px, transparent 0);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    .parchment-left {
+      border-top-left-radius: 9px;
+      border-bottom-left-radius: 9px;
+      background:
+        linear-gradient(90deg, #dfd4bf 0%, #ece7dc 12%, #f3efe6 86%, #d9ccb4 100%);
+      box-shadow: inset -12px 0 24px rgba(45, 30, 15, 0.11);
+    }
+
+    .parchment-right {
+      border-top-right-radius: 9px;
+      border-bottom-right-radius: 9px;
+      background:
+        linear-gradient(270deg, #dfd4bf 0%, #ece7dc 12%, #f3efe6 86%, #d9ccb4 100%);
+      box-shadow: inset 12px 0 24px rgba(45, 30, 15, 0.11);
+    }
+
+    /* Page Stacked Edge Thickness Illusion */
+    .page-stack-left {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: -8px;
+      width: 8px;
+      background: repeating-linear-gradient(90deg, #d6c5a3 0px, #efe4ce 1px, #c7b38e 2px);
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      box-shadow: -3px 2px 6px rgba(0,0,0,0.35);
+    }
+
+    .page-stack-right {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      right: -8px;
+      width: 8px;
+      background: repeating-linear-gradient(90deg, #c7b38e 0px, #efe4ce 1px, #d6c5a3 2px);
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      box-shadow: 3px 2px 6px rgba(0,0,0,0.35);
+    }
+
+    /* 18-Strip Nested Curved Leaf */
+    .turning-leaf-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      pointer-events: none;
+      z-index: 40;
+      display: none;
+    }
+
+    .turning-leaf-container.active {
+      display: block;
+    }
+
+    .leaf-strip {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 100%;
+      height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      backface-visibility: visible;
+    }
+
+    .leaf-strip.root-strip {
+      left: 0;
+      width: calc(100% / 18);
+    }
+
+    .leaf-strip:not(.root-strip) {
+      width: 100%;
+      left: 100%;
+    }
+
+    .strip-face {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      backface-visibility: hidden;
+    }
+
+    .strip-face-front { background: #ece7dc; }
+    .strip-face-back { background: #e7e0d2; transform: rotateY(180deg); }
+
+    .strip-inner-content {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      color: var(--ink);
+      padding: clamp(18px, 3vw, 38px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Corner Curl Hit Zones */
+    .corner-hit-zone {
+      position: absolute;
+      bottom: 0;
+      width: 74px;
+      height: 74px;
+      z-index: 35;
+      cursor: pointer;
+    }
+    .corner-hit-zone.right {
+      right: 0;
+      background: linear-gradient(315deg, rgba(184, 137, 74, 0.30) 0%, rgba(184, 137, 74, 0.08) 45%, transparent 55%);
+      border-bottom-right-radius: 9px;
+      transition: all 0.25s ease;
+    }
+    .corner-hit-zone.right:hover {
+      width: 92px;
+      height: 92px;
+      background: linear-gradient(315deg, rgba(184, 137, 74, 0.48) 0%, rgba(184, 137, 74, 0.16) 48%, transparent 58%);
+    }
+    .corner-hit-zone.left {
+      left: 0;
+      background: linear-gradient(45deg, rgba(184, 137, 74, 0.30) 0%, rgba(184, 137, 74, 0.08) 45%, transparent 55%);
+      border-bottom-left-radius: 9px;
+      transition: all 0.25s ease;
+    }
+    .corner-hit-zone.left:hover {
+      width: 92px;
+      height: 92px;
+      background: linear-gradient(45deg, rgba(184, 137, 74, 0.48) 0%, rgba(184, 137, 74, 0.16) 48%, transparent 58%);
+    }
+
+    /* ============================================================
+       DRAGGABLE 2.3x BRASS MAGNIFYING LOUPE (.loupe, .ring, .grip, .lens, .zoomwrap)
+       ============================================================ */
+    .loupe {
+      position: absolute;
+      width: 178px;
+      height: 178px;
+      border-radius: 9999px;
+      cursor: grab;
+      z-index: 60;
+      display: none;
+      touch-action: none;
+    }
+    .loupe:active { cursor: grabbing; }
+    .loupe.active { display: block; }
+
+    .loupe .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      border: 6px solid #b8894a;
+      box-shadow:
+        0 18px 36px rgba(0, 0, 0, 0.58),
+        inset 0 0 18px rgba(255, 240, 200, 0.45),
+        0 0 0 2px #4e3614;
+      pointer-events: none;
+      z-index: 12;
+    }
+
+    .loupe .grip {
+      position: absolute;
+      bottom: -22px;
+      right: -12px;
+      width: 44px;
+      height: 12px;
+      background: linear-gradient(90deg, #7c5827, #b8894a, #5c3f18);
+      border-radius: 9999px;
+      transform: rotate(38deg);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.55);
+      pointer-events: none;
+      z-index: 11;
+    }
+
+    .loupe .lens {
+      position: absolute;
+      inset: 5px;
+      border-radius: 9999px;
+      overflow: hidden;
+      background: #ece7dc;
+    }
+
+    .loupe .lens::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.06) 45%, rgba(0,0,0,0.12) 100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .loupe .zoomwrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+
+    /* Raw vs Real Comparison Slider */
+    .compare-container {
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      touch-action: pan-y;
+    }
+    .compare-overlay {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Chronology Spine Glow */
+    .chronology-spine {
+      background: linear-gradient(180deg, rgba(200,62,49,0.15) 0%, rgba(200,62,49,0.9) 20%, rgba(184,137,74,0.9) 80%, rgba(184,137,74,0.1) 100%);
+    }
+
+    /* Bold Corner Resume Widget */
+    .corner-resume-card {
+      position: fixed;
+      right: 18px;
+      bottom: 64px;
+      z-index: 70;
+      background: linear-gradient(145deg, #1b1714 0%, #100e0c 100%);
+      border: 2px solid #b8894a;
+      box-shadow:
+        0 20px 45px -10px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(200, 62, 49, 0.35);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+    }
+    .corner-resume-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow:
+        0 26px 55px -10px rgba(0, 0, 0, 0.92),
+        0 0 22px rgba(184, 137, 74, 0.35);
+    }
+
+    /* Print Styles for Clean Resume Export */
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #resume-modal, #resume-modal * {
+        visibility: visible !important;
+      }
+      #resume-modal {
+        position: static !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        display: block !important;
+      }
+      #resume-sheet {
+        max-height: none !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .book-spread {
+        aspect-ratio: auto;
+        min-height: 440px;
+      }
+      .parchment-page {
+        padding: 15px;
+      }
+      .corner-resume-card {
+        right: 12px;
+        bottom: 58px;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-500/30 selection:text-amber-200">
+  <div class="film-grain"></div>
+
+  <!-- CINEMATIC LOADER OVERLAY -->
+  <div id="site-loader" class="fixed inset-0 z-[100] bg-obsidian flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="text-xs font-mono uppercase tracking-[0.35em] text-amber-400/85 mb-3">IICD Jaipur • Studio Archive 2026</div>
+    <div class="font-editorial italic text-4xl sm:text-6xl text-zinc-100">Harsh Khinchi</div>
+    <div class="w-48 h-[2px] bg-zinc-800 mt-5 overflow-hidden rounded-full">
+      <div id="loader-bar" class="h-full bg-gradient-to-r from-[#c83e31] via-[#b8894a] to-amber-200 w-0 transition-all duration-500"></div>
+    </div>
+  </div>
+
+  <!-- STICKY EDITORIAL HEADER -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <a href="#top" class="flex items-center gap-3 group shrink-0">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#c83e31] group-hover:bg-[#b8894a] group-hover:scale-125 transition-all"></span>
+        <span class="font-sans font-bold tracking-wider text-sm sm:text-base text-zinc-100">HARSH KHINCHI</span>
+        <span class="hidden xl:inline-block text-[11px] font-mono text-zinc-400 border-l border-zinc-700 pl-3">MOTION • CRAFT • VERSE</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-xs font-mono uppercase tracking-widest text-zinc-400">
+        <a href="#about" class="hover:text-amber-300 transition-colors">About</a>
+        <a href="#works" class="hover:text-amber-300 transition-colors">Works</a>
+        <a href="#sketchbook" class="hover:text-amber-300 transition-colors">Sketchbook</a>
+        <a href="#chronology" class="hover:text-amber-300 transition-colors">Chronology</a>
+        <a href="#contact" class="hover:text-amber-300 transition-colors">Contact</a>
+      </nav>
+
+      <!-- Header Right Actions: Studio Vault + Bold Resume Trigger -->
+      <div class="flex items-center gap-2.5">
+        <button
+          id="nav-vault-btn"
+          title="Open Private Studio Vault (Ctrl+Shift+U)"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-amber-400/35 text-xs font-mono text-amber-300 transition"
+        >
+          <span id="vault-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="vault-btn-label">Studio Vault</span>
+        </button>
+
+        <button
+          id="nav-resume-btn"
+          class="px-3.5 py-1.5 rounded-full bg-[#c83e31] hover:bg-red-500 text-white font-bold text-xs font-mono uppercase tracking-wider transition shadow-md shadow-red-900/40"
+        >
+          Resume ↗
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       1. WARM EDITORIAL HERO SECTION WITH GENEROUS PORTRAIT BREATHING ROOM
+       ===================================================================== -->
+  <section id="top" class="relative pt-16 pb-24 sm:pt-24 sm:pb-32 overflow-hidden">
+    <div class="absolute inset-x-0 top-6 flex justify-center overflow-hidden pointer-events-none">
+      <span class="giant-wordmark">PORTFOLIO</span>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <!-- Left Narrative Introduction -->
+        <div class="lg:col-span-7 space-y-7">
+          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs font-mono text-zinc-300">
+            <span class="w-2 h-2 rounded-full bg-[#c83e31]"></span>
+            Jaipur, Rajasthan • B.Des Crafts &amp; Design, IICD
+          </div>
+
+          <h1 class="text-4xl sm:text-6xl lg:text-[4.35rem] font-bold tracking-tight leading-[1.04] text-white">
+            Where quiet <span class="font-editorial italic font-normal text-amber-300 text-5xl sm:text-7xl lg:text-[5rem]">verse</span> meets tactile motion.
+          </h1>
+
+          <p class="text-base sm:text-lg text-zinc-300/90 max-w-2xl leading-relaxed font-normal">
+            Welcome to the studio archive of <strong class="text-white font-semibold">Harsh Khinchi</strong>—an eighteen-year-old designer, published anthology poet, and paper cutout stop-motion animator exploring how hand-cut silhouettes, textile threads, and bilingual poetry carry human memory.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3.5 pt-2">
+            <a href="#works" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-sm transition shadow-lg shadow-amber-500/20">
+              Watch Cutout Reel
+            </a>
+            <a href="#sketchbook" class="px-6 py-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100 font-medium text-sm transition">
+              Open Poetry Sketchbook
+            </a>
+            <button id="hero-resume-btn" class="px-5 py-3.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-[#b8894a]/50 text-amber-200 font-mono text-xs uppercase tracking-wider transition">
+              View Full Resume
+            </button>
+          </div>
+
+          <!-- Studio Metrics -->
+          <div class="grid grid-cols-3 gap-6 pt-8 border-t border-zinc-800/80 max-w-xl">
+            <div>
+              <div class="text-2xl sm:text-3xl font-bold text-white">24<span class="text-amber-400">fps</span></div>
+              <div class="text-xs font-mono text-zinc-400 mt-1">Cutout Stop-Motion</div>
+            </div>
+            <div>
+              <div class="text-2xl sm:text-3xl font-bold text-white">03<span class="text-[#c83e31]">+</span></div>
+              <div class="text-xs font-mono text-zinc-400 mt-1">Anthologies &amp; Chapters</div>
+            </div>
+            <div>
+              <div class="text-2xl sm:text-3xl font-bold text-white">IICD</div>
+              <div class="text-xs font-mono text-zinc-400 mt-1">B.Des Crafts &amp; Design</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Profile Portrait (PFP) — Clean, Unobstructed Framing with Separate Plaque Below -->
+        <div class="lg:col-span-5 flex flex-col items-center lg:items-end">
+          <div class="w-full max-w-sm space-y-4">
+            <div class="relative group">
+              <div class="absolute -inset-3 rounded-3xl bg-gradient-to-tr from-amber-500/20 via-red-500/10 to-transparent blur-2xl pointer-events-none"></div>
+
+              <div class="relative rounded-3xl overflow-hidden border border-white/15 bg-zinc-900 shadow-2xl aspect-[4/5]">
+                <img
+                  id="hero-pfp-img"
+                  src="WhatsApp Image 2026-11-13 at 9.29.47 PM.jpeg"
+                  alt="Harsh Khinchi — Portrait in Jaipur"
+                  class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+              </div>
+            </div>
+
+            <!-- Separate Minimalist Caption Card Below Portrait -->
+            <div class="rounded-2xl bg-charcoal/95 border border-white/10 px-5 py-4 flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold text-white">Harsh Khinchi</div>
+                <div class="text-xs font-mono text-zinc-400 mt-0.5">26.9124° N, 75.7873° E • Jaipur</div>
+              </div>
+              <button
+                id="quick-pfp-swap-btn"
+                title="Swap Portrait Locally (Owner Vault)"
+                class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-[11px] font-mono text-amber-300 transition"
+              >
+                Update PFP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       2. ABOUT ME EDITORIAL SECTION ("THE SEAM BETWEEN CRAFT & MOTION")
+       ===================================================================== -->
+  <section id="about" class="py-24 border-t border-zinc-900 bg-zinc-950/60">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div class="lg:col-span-5 space-y-4">
+          <span class="text-xs font-mono uppercase tracking-[0.25em] text-amber-400">About Me • Artist's Note</span>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            The Seam Between <span class="font-editorial italic font-normal text-amber-300">Craft</span> &amp; Motion.
+          </h2>
+          <p class="text-xs font-mono text-zinc-400 pt-2">
+            Indian Institute of Crafts &amp; Design (IICD), Jaipur • B.Des Batch of 2030
+          </p>
+        </div>
+
+        <div class="lg:col-span-7 space-y-6 text-zinc-300 text-base sm:text-[17px] leading-relaxed font-serif">
+          <p>
+            My path into visual storytelling didn't begin inside a conventional film school—it started with ledgers, late-night notebooks, and a fascination with how things are built by hand. After completing my CBSE Class 12 Commerce studies at <span class="text-white font-medium">Maheshwari Public School, Jaipur (2025)</span>, I entered the <span class="text-amber-300 font-medium">B.Des in Crafts &amp; Design at IICD Jaipur</span>, where raw material, cotton thread, and paper are treated as living languages.
+          </p>
+          <p>
+            Before any frame moves on screen, it begins as ink on parchment or black cardstock under a blade. Whether I am stitching continuous-line textile patches in the embroidery studio, photographing articulated silhouettes for stop-motion films like <em>BURNOUT</em>, or layering glitch textures over evergreen melodies, I believe digital art feels most human when it preserves the grain of the hand that made it.
+          </p>
+          <p>
+            Alongside visual direction and stage anchoring at IICD's cultural <em>Varta</em> sessions, I write Hindi, English, and bilingual Hinglish verse—featured in anthologies by <span class="text-white font-medium">Storymonk International</span>, <span class="text-white font-medium">Groww Foundation's Imprint</span>, and <span class="text-white font-medium">India Writing Project</span>. Inside the 3D Sketchbook below, you can turn through my poetry leaf by leaf.
+          </p>
+
+          <div class="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
+            <div class="p-3.5 rounded-2xl bg-charcoal border border-white/10">
+              <div class="text-amber-400 mb-1">01</div>
+              <div class="text-zinc-200">Paper Cutout Animation</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-charcoal border border-white/10">
+              <div class="text-amber-400 mb-1">02</div>
+              <div class="text-zinc-200">Bilingual Poetry &amp; Verse</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-charcoal border border-white/10">
+              <div class="text-amber-400 mb-1">03</div>
+              <div class="text-zinc-200">Textile Patch Craft</div>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-charcoal border border-white/10">
+              <div class="text-amber-400 mb-1">04</div>
+              <div class="text-zinc-200">Glitch &amp; Foley Audio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       3. WORKS THAT SPEAK (PAPER CUTOUT ANIMATION + LOCAL UPLOADER SUPPORT)
+       ===================================================================== -->
+  <section id="works" class="py-24 border-t border-zinc-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-[0.25em] text-amber-400">Selected Motion, Craft &amp; Audio</span>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2">Works That Speak</h2>
+        </div>
+
+        <div class="flex flex-wrap gap-2" id="work-filters">
+          <button data-filter="all" class="work-filter-btn active px-4 py-2 rounded-full text-xs font-mono bg-amber-500 text-zinc-950 font-semibold transition">
+            All Works
+          </button>
+          <button data-filter="animation" class="work-filter-btn px-4 py-2 rounded-full text-xs font-mono bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800 transition">
+            Animation
+          </button>
+          <button data-filter="craft" class="work-filter-btn px-4 py-2 rounded-full text-xs font-mono bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800 transition">
+            Tactile Craft
+          </button>
+          <button data-filter="audio" class="work-filter-btn px-4 py-2 rounded-full text-xs font-mono bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800 transition">
+            Soundscapes
+          </button>
+        </div>
+      </div>
+
+      <div id="works-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Featured Animation Cinema Card -->
+        <article data-category="animation" class="work-card lg:col-span-7 rounded-3xl overflow-hidden bg-charcoal border border-white/10 flex flex-col justify-between shadow-2xl">
+          <div class="relative bg-black aspect-video w-full overflow-hidden">
+            <video
+              id="featured-animation-video"
+              src="runway-paper-cutout-animation-20261101-212325.mp4"
+              controls
+              playsinline
+              loop
+              muted
+              class="w-full h-full object-contain bg-zinc-950"
+            ></video>
+
+            <!-- Interactive Fallback Overlay if local mp4 isn't mounted in preview -->
+            <div id="video-fallback-banner" class="hidden absolute inset-0 bg-zinc-950/95 flex flex-col items-center justify-center p-6 text-center">
+              <div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-300 mb-3">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </div>
+              <p class="font-editorial italic text-2xl text-white">BURNOUT — Paper Cutout Stop-Motion (00:23)</p>
+              <p class="text-xs text-zinc-400 max-w-md mt-1.5 mb-4">
+                Select your local <code class="text-amber-300">.mp4</code> animation file to preview it directly in this cinema player (saved privately in your browser).
+              </p>
+              <button id="fallback-load-video-btn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs font-mono transition">
+                + Load Local Video File
+              </button>
+            </div>
+          </div>
+
+          <div class="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 text-xs font-mono text-amber-400 mb-1.5">
+                <span>12-FRAME STOP-MOTION • 00:23</span>
+                <span>•</span>
+                <span>PAPER CUTOUT</span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-bold text-white">BURNOUT — Tactile Paper Cutout Study</h3>
+              <p class="text-sm text-zinc-400 mt-1.5 leading-relaxed">
+                Articulated black paper silhouettes photographed frame-by-frame over a warm backlit surface—tracing late-night desk fatigue, character model sheets, and stillness.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Right Stacked Discipline Cards -->
+        <div class="lg:col-span-5 flex flex-col gap-8">
+          <article data-category="craft" class="work-card rounded-3xl p-6 sm:p-7 bg-charcoal border border-white/10 hover:border-amber-400/30 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono text-zinc-400 mb-4">
+                <span class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20">TEXTILE &amp; MATERIAL CRAFT</span>
+                <span>8×8 INCH PATCH</span>
+              </div>
+              <h3 class="text-xl font-bold text-white">Continuous Line Embroidery Patch Design</h3>
+              <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                8×8 inch textile embroidery patch studies built from continuous-line needlework and varied border stitch craft at the IICD Jaipur textile workshops.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-300">
+              <span>Cotton Thread • Border Stitch</span>
+              <a href="#raw-real" class="text-amber-400 hover:underline">Compare Process →</a>
+            </div>
+          </article>
+
+          <article data-category="audio" class="work-card rounded-3xl p-6 sm:p-7 bg-charcoal border border-white/10 hover:border-amber-400/30 transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono text-zinc-400 mb-4">
+                <span class="px-2.5 py-1 rounded-md bg-red-500/10 text-red-300 border border-red-500/20">AUDIO &amp; STAGE SCRIPTS</span>
+                <span>SOUNDSCAPES</span>
+              </div>
+              <h3 class="text-xl font-bold text-white">Glitch Soundscapes &amp; Hinglish Scripts</h3>
+              <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                Custom instrumental and glitch audio textures paired with bilingual Hinglish scripts crafted for campus anchoring and spoken-word performances.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-300">
+              <span>Glitch • Melodic • Spoken Word</span>
+              <a href="#sketchbook" class="text-amber-400 hover:underline">Read Verse →</a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Private Owner Media Works Container (Visible only when Studio Vault is unlocked) -->
+        <div id="private-works-container" class="hidden lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       4. POETRY-ONLY 3D CURVED-LEAF SKETCHBOOK (18-STRIP NESTED ENGINE)
+       ===================================================================== -->
+  <section id="sketchbook" class="py-24 relative border-t border-zinc-900 bg-gradient-to-b from-obsidian via-[#0e0c0a] to-obsidian">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-[0.25em] text-amber-400">Poetry-Only Manuscript • 18-Strip Curved Leaf</span>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2">The Poetry Sketchbook</h2>
+          <p class="text-sm text-zinc-400 mt-2 max-w-2xl">
+            Dedicated exclusively to original Hindi, Hinglish, and English poetry. Turn any leaf via the page corners, arrow keys, or add new poems inside your <button id="inline-vault-link" class="text-amber-300 underline hover:text-amber-200">Studio Vault</button>.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 bg-zinc-900/90 p-2 rounded-2xl border border-white/10">
+          <div class="flex items-center gap-1 px-2 border-r border-zinc-800">
+            <button id="zoom-out-btn" class="p-2 rounded-lg hover:bg-zinc-800 text-zinc-300 text-xs font-mono" title="Zoom Out">−</button>
+            <span id="zoom-label" class="text-xs font-mono text-amber-300 w-12 text-center">100%</span>
+            <button id="zoom-in-btn" class="p-2 rounded-lg hover:bg-zinc-800 text-zinc-300 text-xs font-mono" title="Zoom In">+</button>
+          </div>
+
+          <button id="toggle-loupe-btn" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono flex items-center gap-1.5 transition">
+            <span>🔍</span> 2.3× Loupe
+          </button>
+
+          <button id="open-reader-btn" class="px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/30 text-amber-300 text-xs font-mono transition">
+            📖 Reader View
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-center overflow-visible py-4">
+        <div id="sketchbook-stage" class="sketchbook-stage w-full max-w-5xl">
+          <div id="sketchbook-rig" class="sketchbook-rig">
+            <div class="book-cover">
+              <div class="brass-corner tl"></div>
+              <div class="brass-corner tr"></div>
+              <div class="brass-corner bl"></div>
+              <div class="brass-corner br"></div>
+
+              <div id="book-spread" class="book-spread">
+                <div class="page-stack-left"></div>
+                <div class="page-stack-right"></div>
+
+                <div id="left-page" class="parchment-page parchment-left"></div>
+                <div id="right-page" class="parchment-page parchment-right"></div>
+
+                <div class="book-spine-gutter"></div>
+                <div class="ribbon-bookmark"></div>
+
+                <div id="turning-leaf" class="turning-leaf-container"></div>
+
+                <div id="prev-corner" class="corner-hit-zone left" title="Previous Leaf"></div>
+                <div id="next-corner" class="corner-hit-zone right" title="Next Leaf"></div>
+
+                <!-- Draggable 2.3x Brass Magnifying Loupe (.loupe, .ring, .grip, .lens, .zoomwrap) -->
+                <div id="brass-loupe" class="loupe" style="top: 26%; left: 54%;">
+                  <div class="ring"></div>
+                  <div class="grip"></div>
+                  <div class="lens">
+                    <div id="loupe-clone-stage" class="zoomwrap"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4 bg-zinc-900/70 border border-white/10 rounded-2xl px-5 py-3.5">
+        <button id="prev-spread-btn" class="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 disabled:opacity-40 text-xs font-mono text-zinc-200 transition">
+          ← Previous Poem
+        </button>
+
+        <div class="flex items-center gap-3">
+          <span id="spread-indicator" class="text-xs font-mono text-amber-300">Spread 1 of 3 • Poems 1–2</span>
+          <div id="spread-dots" class="hidden sm:flex items-center gap-1.5"></div>
+        </div>
+
+        <button id="next-spread-btn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-xs font-mono font-semibold text-zinc-950 transition">
+          Next Poem →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       5. INTERACTIVE RAW VS REAL CRAFT COMPARISON SLIDER
+       ===================================================================== -->
+  <section id="raw-real" class="py-20 border-t border-zinc-900 bg-zinc-950/40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <span class="text-xs font-mono uppercase tracking-[0.25em] text-amber-400">From Raw To Real</span>
+        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2">The Tactile Pipeline</h2>
+        <p class="text-sm text-zinc-400 mt-2">Drag the handle to compare the unlit lightbox cutout rig against the final atmospheric grade.</p>
+      </div>
+
+      <div id="compare-box" class="compare-container rounded-3xl border border-white/15 aspect-[16/9] max-h-[440px] w-full bg-zinc-900 shadow-2xl">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#231710] via-[#130e0b] to-[#0b0a09] flex items-center justify-center p-8">
+          <div class="max-w-xl text-center space-y-4">
+            <span class="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-mono">REAL • GRADED 24FPS &amp; WARM HALATION</span>
+            <h3 class="font-editorial italic text-3xl sm:text-5xl text-amber-100">Tungsten Diffusion &amp; Grain</h3>
+            <p class="text-sm text-amber-200/75 leading-relaxed">
+              Backlit cotton fiber texture, subtle chromatic halation around paper edges, and foley-synced micro-movements.
+            </p>
+          </div>
+        </div>
+
+        <div id="compare-raw-layer" class="compare-overlay bg-zinc-950" style="width: 50%;">
+          <div class="w-full h-full flex items-center justify-center p-8 border-r-2 border-amber-400" style="background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 32px 32px;">
+            <div class="max-w-xl text-center space-y-4">
+              <span class="px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-mono">RAW • UNGRADED CUTOUT KEYFRAMES</span>
+              <h3 class="font-mono text-2xl sm:text-4xl font-bold text-zinc-200">Cardstock &amp; Pivot Joints</h3>
+              <p class="text-sm text-zinc-400 leading-relaxed">
+                Hand-cut silhouettes pinned on a glass table with raw exposure passes and spring-eased motion curves.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="compare-handle" class="absolute top-0 bottom-0 w-1 bg-amber-400 cursor-ew-resize z-20" style="left: 50%;">
+          <div class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-amber-400 text-zinc-950 font-bold text-xs flex items-center justify-center shadow-lg">
+            ↔
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       6. VISUAL CHRONOLOGY TIMELINE
+       ===================================================================== -->
+  <section id="chronology" class="py-24 border-t border-zinc-900 relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl mb-16">
+        <span class="text-xs font-mono uppercase tracking-[0.25em] text-[#c83e31]">Milestones &amp; Archive</span>
+        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2">Chronology</h2>
+        <p class="text-sm sm:text-base text-zinc-400 mt-3 leading-relaxed">
+          From early worldbuilding notebooks in 2020 to national anthologies, B.Des Crafts &amp; Design at IICD Jaipur, and cultural showcases.
+        </p>
+      </div>
+
+      <div class="relative">
+        <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2 chronology-spine"></div>
+
+        <div class="space-y-12">
+          <!-- Dec 13, 2026 -->
+          <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0 md:text-right">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-400 mb-2">
+                  <span>DEC 13, 2026</span>
+                  <span>•</span>
+                  <span>JAWAHAR KALA KENDRA, JAIPUR</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">The Artract Festival 2026</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Showcasing interdisciplinary craft-motion studies, poetry readings, and tactile visual installations at Jaipur's cultural landmark.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-amber-400 ring-4 ring-obsidian shadow-[0_0_16px_rgba(251,191,36,0.75)]"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 pl-4">08 / EXHIBITION</div>
+          </div>
+
+          <!-- Oct–Nov 2026 -->
+          <div class="relative flex flex-col md:flex-row-reverse items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-red-500/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-red-400 mb-2">
+                  <span>OCT–NOV 2026</span>
+                  <span>•</span>
+                  <span>STUDIO ARCHIVE</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">BURNOUT 12-Frame Cutout Reel &amp; Poetry Sketchbook</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Directed the 12-frame paper cutout stop-motion animation <em>BURNOUT</em> with multi-angle character sheets and engineered the 3D curved-leaf Poetry Sketchbook.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#c83e31] ring-4 ring-obsidian shadow-[0_0_16px_rgba(200,62,49,0.75)]"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 text-right pr-4">07 / MOTION &amp; INTERACTIVE</div>
+          </div>
+
+          <!-- Oct 2026 -->
+          <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0 md:text-right">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-400 mb-2">
+                  <span>OCT 2026</span>
+                  <span>•</span>
+                  <span>STORYMONK INTERNATIONAL &amp; IWP</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">Anthology Series &amp; India Writing Project Season 10</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Published as a poet and author in the <em>Storymonk International</em> anthology series and selected in <em>India Writing Project</em> Season 10.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-amber-500 ring-4 ring-obsidian"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 pl-4">06 / PUBLICATIONS</div>
+          </div>
+
+          <!-- Sep 2026 -->
+          <div class="relative flex flex-col md:flex-row-reverse items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-red-500/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-red-400 mb-2">
+                  <span>SEP 2026</span>
+                  <span>•</span>
+                  <span>MOOD INDIGO MULTICITY • JECRC</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">Mehfil-e-Indigo Literary Competition</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Competed and performed original verse at IIT Bombay's Mood Indigo Jaipur Multicity prelims hosted at JECRC University.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#c83e31] ring-4 ring-obsidian"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 text-right pr-4">05 / LITERARY STAGE</div>
+          </div>
+
+          <!-- Jul–Aug 2026 -->
+          <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0 md:text-right">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-400 mb-2">
+                  <span>JUL–AUG 2026</span>
+                  <span>•</span>
+                  <span>IICD JAIPUR</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">B.Des in Crafts &amp; Design + French A1.1</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Enrolled in Bachelor of Design (Crafts &amp; Design) and the 60-hour French A1.1 certification at Indian Institute of Crafts &amp; Design, Jaipur.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-zinc-400 ring-4 ring-obsidian"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 pl-4">04 / DESIGN STUDIES</div>
+          </div>
+
+          <!-- May–Jun 2026 -->
+          <div class="relative flex flex-col md:flex-row-reverse items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/40 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-amber-400 mb-2">
+                  <span>MAY–JUN 2026</span>
+                  <span>•</span>
+                  <span>GROWW FOUNDATION</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">"Imprint" National Book Chapter Submission</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Authored and submitted an original book chapter for the <em>Imprint</em> national publishing initiative by Groww Foundation.
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-zinc-500 ring-4 ring-obsidian"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 text-right pr-4">03 / BOOK CHAPTER</div>
+          </div>
+
+          <!-- 2020–2025 -->
+          <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="md:w-[46%] pl-12 md:pl-0 md:text-right">
+              <div class="p-6 rounded-3xl bg-charcoal border border-white/10 transition shadow-xl">
+                <div class="inline-flex items-center gap-2 text-xs font-mono text-zinc-400 mb-2">
+                  <span>2020 — 2025</span>
+                  <span>•</span>
+                  <span>JAIPUR ROOTS</span>
+                </div>
+                <h3 class="text-xl font-bold text-white">S.A.I. 887 Notebooks &amp; MPS Class 12 Graduation</h3>
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">
+                  Initiated the speculative <em>S.A.I. 887</em> universe and early poetry notebooks (2020), followed by CBSE Class 12 Commerce graduation from Maheshwari Public School, Jaipur (2025).
+                </p>
+              </div>
+            </div>
+            <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-zinc-700 ring-4 ring-obsidian"></div>
+            <div class="hidden md:block md:w-[46%] font-mono text-xs text-zinc-500 pl-4">01–02 / ORIGINS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       7. STREAMLINED 3-COLUMN CONTACT LIST: CONTACT ME • MY DETAILS • COURSE
+       ===================================================================== -->
+  <section id="contact" class="py-24 border-t border-zinc-900 bg-zinc-950/75">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-[0.25em] text-amber-400">Directory &amp; Academic Profile</span>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2">Contact &amp; Credentials</h2>
+        </div>
+        <button
+          id="section-resume-btn"
+          class="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-[#b8894a]/50 text-amber-300 font-mono text-xs uppercase tracking-wider transition"
+        >
+          Open Printable Resume ↗
+        </button>
+      </div>
+
+      <!-- Strictly 3 Columns: 1. Contact Me | 2. My Details | 3. Course -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-7">
+        <!-- COLUMN 1: CONTACT ME -->
+        <div class="rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/35 transition p-7 sm:p-8 flex flex-col justify-between shadow-xl">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono uppercase tracking-widest text-amber-400">01 / Contact Me</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">Contact Me</h3>
+
+            <ul class="space-y-4 text-sm text-zinc-300">
+              <li class="pb-3 border-b border-zinc-800/80">
+                <div class="text-[11px] font-mono uppercase text-zinc-500 mb-1">Direct Email</div>
+                <div class="flex items-center justify-between gap-2">
+                  <a href="mailto:harshkhinchi@example.com" class="text-amber-300 hover:underline font-mono text-xs sm:text-sm truncate">
+                    harshkhinchi@example.com
+                  </a>
+                  <button
+                    id="copy-email-btn"
+                    class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-[11px] font-mono text-zinc-200 shrink-0 transition"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </li>
+
+              <li class="pb-3 border-b border-zinc-800/80">
+                <div class="text-[11px] font-mono uppercase text-zinc-500 mb-1">Studio Location</div>
+                <div class="text-zinc-200">Jaipur, Rajasthan, India</div>
+              </li>
+
+              <li>
+                <div class="text-[11px] font-mono uppercase text-zinc-500 mb-1.5">Available For</div>
+                <div class="text-zinc-300 leading-relaxed text-xs sm:text-sm">
+                  Cutout &amp; Stop-Motion Animation, Poetry &amp; Bilingual Hinglish Scripts, and Cultural Stage Anchoring.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-zinc-800/80 flex items-center gap-2.5">
+            <a
+              href="mailto:harshkhinchi@example.com?subject=Creative%20Collaboration%20—%20Harsh%20Khinchi"
+              class="flex-1 text-center py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs font-mono uppercase tracking-wider transition"
+            >
+              Send Email
+            </a>
+            <button
+              id="copy-inquiry-btn"
+              class="py-2.5 px-3.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-mono transition"
+              title="Copy Contact Card"
+            >
+              Copy Card
+            </button>
+          </div>
+          <p id="contact-feedback" class="text-[11px] font-mono text-emerald-400 mt-2 hidden"></p>
+        </div>
+
+        <!-- COLUMN 2: MY DETAILS -->
+        <div class="rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/35 transition p-7 sm:p-8 flex flex-col justify-between shadow-xl">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono uppercase tracking-widest text-amber-400">02 / My Details</span>
+              <span class="text-[11px] font-mono text-zinc-500">PROFILE</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">My Details</h3>
+
+            <dl class="space-y-3.5 text-sm">
+              <div class="flex justify-between gap-4 pb-2.5 border-b border-zinc-800/80">
+                <dt class="font-mono text-xs text-zinc-500 uppercase">Full Name</dt>
+                <dd class="text-zinc-100 font-medium text-right">Harsh Khinchi</dd>
+              </div>
+              <div class="flex justify-between gap-4 pb-2.5 border-b border-zinc-800/80">
+                <dt class="font-mono text-xs text-zinc-500 uppercase">Age</dt>
+                <dd class="text-zinc-100 font-medium text-right">18 Years</dd>
+              </div>
+              <div class="flex justify-between gap-4 pb-2.5 border-b border-zinc-800/80">
+                <dt class="font-mono text-xs text-zinc-500 uppercase">Home Base</dt>
+                <dd class="text-zinc-100 font-medium text-right">Jaipur, Rajasthan, India</dd>
+              </div>
+              <div class="flex justify-between gap-4 pb-2.5 border-b border-zinc-800/80">
+                <dt class="font-mono text-xs text-zinc-500 uppercase">Languages</dt>
+                <dd class="text-zinc-100 font-medium text-right">English, Hindi, French (A1.1)</dd>
+              </div>
+              <div>
+                <dt class="font-mono text-xs text-zinc-500 uppercase mb-1">Creative Roles</dt>
+                <dd class="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                  Published Anthology Poet (<em>Storymonk International</em>), Paper Cutout &amp; Stop-Motion Animator, Craft &amp; Design Student.
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400">
+            <span>Jaipur Studio</span>
+            <span class="text-amber-300">26.9124° N, 75.7873° E</span>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: COURSE -->
+        <div class="rounded-3xl bg-charcoal border border-white/10 hover:border-amber-400/35 transition p-7 sm:p-8 flex flex-col justify-between shadow-xl">
+          <div class="space-y-5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono uppercase tracking-widest text-amber-400">03 / Course</span>
+              <span class="text-[11px] font-mono text-zinc-500">ACADEMICS</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white">Course</h3>
+
+            <div class="space-y-4 text-sm">
+              <div class="p-4 rounded-2xl bg-zinc-900/90 border border-amber-400/20">
+                <div class="text-[11px] font-mono uppercase text-amber-400 mb-1">Current Degree Program</div>
+                <div class="font-semibold text-white">Bachelor of Design (B.Des) in Crafts and Design</div>
+                <div class="text-xs text-zinc-400 mt-1">Indian Institute of Crafts &amp; Design (IICD), Jaipur • Enrolled July 2026</div>
+              </div>
+
+              <div class="pb-3 border-b border-zinc-800/80">
+                <div class="text-[11px] font-mono uppercase text-zinc-500 mb-1">Language Certification</div>
+                <div class="text-zinc-200 font-medium">French A1.1 Language Course (60 Hours)</div>
+                <div class="text-xs text-zinc-400 mt-0.5">IICD Jaipur • August 2026</div>
+              </div>
+
+              <div>
+                <div class="text-[11px] font-mono uppercase text-zinc-500 mb-1">Senior Secondary Education</div>
+                <div class="text-zinc-200 font-medium">CBSE Class 12 — Commerce Track</div>
+                <div class="text-xs text-zinc-400 mt-0.5">Maheshwari Public School, Jaipur • Completed 2025</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-6 mt-6 border-t border-zinc-800/80 flex items-center justify-between text-xs font-mono text-zinc-400">
+            <span>IICD Batch of 2030</span>
+            <span class="text-emerald-400">Active Student</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       8. FOOTER
+       ===================================================================== -->
+  <footer class="border-t border-zinc-900 bg-zinc-950 py-12 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div>
+        <div class="font-sans font-bold text-base tracking-wider text-white">HARSH KHINCHI</div>
+        <p class="text-xs text-zinc-500 mt-1">B.Des Crafts &amp; Design • IICD Jaipur • Motion, Craft &amp; Poetry</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="text-xs font-mono text-zinc-500">© 2026 Harsh Khinchi</span>
+        <button
+          id="footer-vault-btn"
+          class="px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-amber-300 transition flex items-center gap-2 text-xs font-mono"
+        >
+          <span>🔐</span>
+          <span>Owner Studio Vault</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       BOLD CORNER RESUME SHOWCASE CARD (FIXED BOTTOM-RIGHT)
+       ===================================================================== -->
+  <button
+    id="corner-resume-widget"
+    class="corner-resume-card rounded-2xl px-4 py-3 text-left group cursor-pointer max-w-[235px]"
+    title="Open Harsh Khinchi's Full Resume"
+  >
+    <div class="flex items-center justify-between gap-3 mb-1">
+      <span class="px-2 py-0.5 rounded bg-[#c83e31] text-white font-mono text-[10px] font-bold uppercase tracking-widest">
+        RESUME
+      </span>
+      <span class="text-amber-300 font-mono text-xs group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+        ↗
+      </span>
+    </div>
+    <div class="font-sans font-extrabold text-sm tracking-tight text-white uppercase">
+      HARSH KHINCHI
+    </div>
+    <div class="text-[11px] font-mono text-amber-200/80 mt-0.5 truncate">
+      B.Des IICD • Poet • Animator
+    </div>
+  </button>
+
+  <!-- BOTTOM TIMELINE SCRUBBER HUD -->
+  <div class="fixed bottom-3 inset-x-0 z-40 pointer-events-none flex justify-center px-4">
+    <div class="pointer-events-auto glass-panel rounded-full px-4 py-2 flex items-center gap-3 shadow-2xl border border-white/10 max-w-md w-full">
+      <span class="text-[10px] font-mono text-amber-400 uppercase tracking-wider">REEL</span>
+      <div class="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+        <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-[#c83e31] via-[#b8894a] to-amber-200 w-0 transition-all duration-150"></div>
+      </div>
+      <span id="scroll-percent-label" class="text-[10px] font-mono text-zinc-400 w-9 text-right">0%</span>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       EXECUTIVE RESUME SHOWCASE MODAL (PRINTABLE / PDF READY)
+       ===================================================================== -->
+  <div id="resume-modal" class="fixed inset-0 z-[85] hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div id="resume-sheet" class="bg-[#f4efe6] text-[#2b2721] w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl border-2 border-[#b8894a] flex flex-col overflow-hidden">
+      <!-- Top Action Bar -->
+      <div class="no-print px-6 py-4 bg-[#e6decb] border-b border-[#2b2721]/15 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span class="px-2.5 py-0.5 rounded bg-[#c83e31] text-white font-mono text-[10px] font-bold uppercase tracking-widest">CURRICULUM VITAE</span>
+          <span class="text-xs font-mono text-[#2b2721]/80">Harsh Khinchi • Studio &amp; Academic Resume</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="window.print()" class="px-3.5 py-1.5 rounded-xl bg-[#2b2721] text-[#f4efe6] hover:opacity-90 text-xs font-mono transition">
+            🖨 Print / Save PDF
+          </button>
+          <button id="close-resume-btn" class="px-3.5 py-1.5 rounded-xl bg-[#c83e31] text-white hover:opacity-90 text-xs font-mono transition">
+            Close ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Resume Content -->
+      <div class="p-6 sm:p-10 overflow-y-auto space-y-8">
+        <!-- Resume Header -->
+        <div class="border-b-2 border-[#2b2721] pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h2 class="font-sans text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1c1915] uppercase">
+              Harsh Khinchi
+            </h2>
+            <p class="font-serif italic text-lg sm:text-xl text-[#8f2d23] mt-1">
+              B.Des Crafts &amp; Design Student · Published Poet · Cutout &amp; Stop-Motion Animator
+            </p>
+          </div>
+          <div class="font-mono text-xs text-[#2b2721]/85 sm:text-right space-y-1">
+            <div>Jaipur, Rajasthan, India</div>
+            <div>Age: 18 • English, Hindi, French (A1.1)</div>
+            <div>harshkhinchi@example.com</div>
+          </div>
+        </div>
+
+        <!-- Two Column Body -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <!-- Left Column (7 cols): Education & Publications -->
+          <div class="md:col-span-7 space-y-7">
+            <div>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c83e31] border-b border-[#2b2721]/20 pb-1.5 mb-3">
+                Education
+              </h3>
+              <div class="space-y-4 text-sm">
+                <div>
+                  <div class="flex justify-between font-bold text-[#1c1915]">
+                    <span>Indian Institute of Crafts &amp; Design (IICD), Jaipur</span>
+                    <span class="font-mono text-xs">2026 – Present</span>
+                  </div>
+                  <div class="text-[#2b2721]/85">Bachelor of Design (B.Des) in Crafts and Design</div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between font-bold text-[#1c1915]">
+                    <span>French A1.1 Language Certification (60 Hours)</span>
+                    <span class="font-mono text-xs">Aug 2026</span>
+                  </div>
+                  <div class="text-[#2b2721]/85">Indian Institute of Crafts &amp; Design (IICD), Jaipur</div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between font-bold text-[#1c1915]">
+                    <span>Maheshwari Public School, Jaipur</span>
+                    <span class="font-mono text-xs">Completed 2025</span>
+                  </div>
+                  <div class="text-[#2b2721]/85">CBSE Class 12 — Commerce Track</div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c83e31] border-b border-[#2b2721]/20 pb-1.5 mb-3">
+                Publications &amp; Literary Honors
+              </h3>
+              <ul class="space-y-2.5 text-sm text-[#2b2721]/90 list-disc pl-4">
+                <li>
+                  <strong>Published Poet &amp; Author in Anthology Series</strong> — <em>Storymonk International</em> (Oct 2026)
+                </li>
+                <li>
+                  <strong>Authored &amp; Submitted Original Book Chapter</strong> — <em>Imprint</em> National Publishing Initiative by Groww Foundation (May 2026)
+                </li>
+                <li>
+                  <strong>Selected Entry</strong> — <em>India Writing Project</em> Season 10 (Oct 2026)
+                </li>
+                <li>
+                  <strong>Literary Competitor</strong> — <em>Mehfil-e-Indigo</em>, Mood Indigo Jaipur Multicity Prelims at JECRC University (Sep 2026)
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c83e31] border-b border-[#2b2721]/20 pb-1.5 mb-3">
+                Creative Works &amp; Original Writing
+              </h3>
+              <ul class="space-y-2.5 text-sm text-[#2b2721]/90 list-disc pl-4">
+                <li>
+                  <strong>BURNOUT (2026):</strong> 12-frame paper cutout stop-motion animation reel with articulated silhouettes and multi-angle character model sheets.
+                </li>
+                <li>
+                  <strong>Poetry &amp; Spoken Word:</strong> Original Hindi, English, and bilingual Hinglish verse &amp; stage performance scripts.
+                </li>
+                <li>
+                  <strong>Original Fiction &amp; Worldbuilding:</strong> <em>Curse of Eternal Asura</em>, <em>Smilebound</em>, <em>Forever Smile</em>, and the <em>S.A.I. 887</em> universe (est. 2020).
+                </li>
+                <li>
+                  <strong>Textile Embroidery Patch Craft:</strong> 8×8 inch continuous-line embroidery compositions featuring varied border stitch techniques.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Right Column (5 cols): Leadership, Competitions & Skills -->
+          <div class="md:col-span-5 space-y-7">
+            <div class="p-5 rounded-2xl bg-[#e9e1d0] border border-[#2b2721]/15 space-y-4">
+              <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c83e31] border-b border-[#2b2721]/20 pb-1.5">
+                Leadership &amp; Competitions
+              </h3>
+              <div class="space-y-3 text-sm">
+                <div>
+                  <div class="font-bold text-[#1c1915]">Campus Event &amp; Varta Co-Anchor</div>
+                  <div class="text-xs text-[#2b2721]/80 mt-0.5">
+                    Co-anchored cultural <em>Varta</em> sessions and campus events at IICD Jaipur alongside Deeksha.
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold text-[#1c1915]">Eureka! Junior Competitor</div>
+                  <div class="text-xs text-[#2b2721]/80 mt-0.5">
+                    National Entrepreneurship Quiz &amp; Business Plan Competition organized by E-Cell, IIT Bombay.
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold text-[#1c1915]">The Artract Festival 2026</div>
+                  <div class="text-xs text-[#2b2721]/80 mt-0.5">
+                    Featured creative showcase at Jawahar Kala Kendra, Jaipur (Dec 13, 2026).
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-[#e9e1d0] border border-[#2b2721]/15 space-y-3">
+              <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c83e31] border-b border-[#2b2721]/20 pb-1.5">
+                Craft, Motion &amp; Technical Tools
+              </h3>
+              <div class="flex flex-wrap gap-1.5 font-mono text-[11px]">
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Paper Cutout Animation</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">24fps Stop-Motion</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Character Turnarounds</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Textile Embroidery</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Bilingual Scripting</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Glitch Soundscapes</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Python</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">SQL</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Wix Studio</span>
+                <span class="px-2.5 py-1 rounded bg-[#f4efe6] border border-[#2b2721]/20">Notion Databases</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       DISTRACTION-FREE POETRY READER MODAL
+       ===================================================================== -->
+  <div id="reader-modal" class="fixed inset-0 z-[80] hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#ece7dc] text-ink w-full max-w-3xl max-h-[88vh] rounded-3xl shadow-2xl border-2 border-amber-700/40 flex flex-col overflow-hidden">
+      <div class="px-6 py-4 bg-[#dfd5c3] border-b border-amber-900/15 flex items-center justify-between">
+        <div>
+          <span id="reader-category" class="text-[11px] font-mono uppercase tracking-widest text-amber-900">Poetry Folio</span>
+          <h3 id="reader-title" class="font-editorial italic text-2xl sm:text-3xl text-ink">Title</h3>
+        </div>
+        <button id="close-reader-btn" class="px-3.5 py-1.5 rounded-xl bg-ink text-parchment text-xs font-mono hover:opacity-90">
+          Close ✕
+        </button>
+      </div>
+      <div id="reader-body" class="p-6 sm:p-10 overflow-y-auto font-serif text-lg sm:text-xl leading-relaxed space-y-6"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       OWNER-ONLY PRIVATE STUDIO VAULT MODAL (PIN-PROTECTED LOCAL INDEXEDDB)
+       ===================================================================== -->
+  <div id="vault-modal" class="fixed inset-0 z-[90] hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-zinc-950 border border-white/15 w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/80">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <h3 class="font-sans font-bold text-base sm:text-lg text-white">Harsh's Private Studio Vault</h3>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">Owner Only • Local Browser</span>
+        </div>
+        <button id="close-vault-btn" class="px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono">
+          Close ✕
+        </button>
+      </div>
+
+      <!-- STEP 1: PASSCODE GATE -->
+      <div id="vault-lock-screen" class="p-6 sm:p-8 space-y-5">
+        <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 leading-relaxed">
+          <strong>100% Private to Your Device:</strong> Everything you add here—new poems, local videos, or portrait updates—is saved exclusively inside <em>your own browser's local IndexedDB</em>. Visitors on the public site never see or access these files.
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">Enter Owner Passcode (Default PIN: <span class="text-amber-300">2026</span>)</label>
+          <div class="flex gap-2">
+            <input
+              id="vault-passcode-input"
+              type="password"
+              placeholder="2026"
+              class="flex-1 px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-700 text-white font-mono focus:outline-none focus:border-amber-400"
+            />
+            <button id="unlock-vault-btn" class="px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-sm transition">
+              Unlock Studio
+            </button>
+          </div>
+          <p id="vault-error-msg" class="text-xs text-rose-400 font-mono mt-2 hidden">Incorrect passcode. Default PIN is 2026.</p>
+        </div>
+      </div>
+
+      <!-- STEP 2: UNLOCKED PRIVATE STUDIO WORKSPACE -->
+      <div id="vault-workspace" class="hidden p-6 overflow-y-auto space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-800">
+          <div class="flex items-center gap-2">
+            <input id="new-passcode-input" type="password" placeholder="New PIN" class="w-28 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-xs text-white font-mono" />
+            <button id="save-passcode-btn" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-mono text-zinc-200">
+              Update PIN
+            </button>
+          </div>
+          <button id="lock-vault-btn" class="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-mono">
+            🔒 Lock &amp; Hide Private Items
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="p-4 rounded-2xl bg-zinc-900/90 border border-emerald-500/25 space-y-3">
+            <div class="text-xs font-mono uppercase text-emerald-400">1. Add Poem to 3D Sketchbook</div>
+            <input id="private-poem-title" type="text" placeholder="Poem Title" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+            <input id="private-poem-subtitle" type="text" placeholder="Subtitle / Place (e.g., Jaipur • Nov 2026)" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+            <textarea id="private-poem-body" rows="4" placeholder="Write or paste your stanzas here (separate stanzas with a blank line)..." class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white"></textarea>
+            <button id="save-poem-btn" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition">
+              + Add Poem to Sketchbook
+            </button>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-zinc-900/90 border border-amber-500/25 space-y-3">
+            <div class="text-xs font-mono uppercase text-amber-400">2. Add Local Video / Photo / PFP</div>
+            <input id="local-media-title" type="text" placeholder="Title (e.g., Paper Cutout Test 02)" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white" />
+            <select id="local-media-target" class="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300">
+              <option value="reel">Add to My Private Works Showcase</option>
+              <option value="pfp">Update My Hero Profile Photo (PFP)</option>
+              <option value="animation">Load into Featured Animation Player</option>
+            </select>
+            <input id="local-file-input" type="file" accept="video/*,image/*" class="block w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-mono file:bg-amber-500/20 file:text-amber-300 hover:file:bg-amber-500/30 cursor-pointer" />
+            <button id="upload-media-btn" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-xs transition">
+              + Save Local File Privately
+            </button>
+          </div>
+        </div>
+
+        <div id="vault-status-toast" class="hidden px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono"></div>
+
+        <div>
+          <div class="text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2.5">Your Private Local Items (Saved in This Browser)</div>
+          <div id="vault-items-list" class="space-y-2 max-h-48 overflow-y-auto">
+            <p class="text-xs text-zinc-500 italic">No private items saved yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION SCRIPT
+       ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* -------------------------------------------------------------------
+         1. LOADER & SCROLL PROGRESS HUD
+         ------------------------------------------------------------------- */
+      window.addEventListener('load', () => {
+        const bar = document.getElementById('loader-bar');
+        const loader = document.getElementById('site-loader');
+        if (bar) bar.style.width = '100%';
+        setTimeout(() => {
+          if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 700);
+          }
+        }, 420);
+      });
+
+      window.addEventListener('scroll', () => {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? Math.min(100, Math.max(0, Math.round((window.scrollY / docHeight) * 100))) : 0;
+        const bar = document.getElementById('scroll-progress-bar');
+        const lbl = document.getElementById('scroll-percent-label');
+        if (bar) bar.style.width = pct + '%';
+        if (lbl) lbl.textContent = pct + '%';
+      }, { passive: true });
+
+      /* -------------------------------------------------------------------
+         2. PFP & VIDEO GRACEFUL FALLBACKS
+         ------------------------------------------------------------------- */
+      const heroPfpImg = document.getElementById('hero-pfp-img');
+      if (heroPfpImg) {
+        heroPfpImg.addEventListener('error', () => {
+          const svgFallback = `data:image/svg+xml;utf8,` + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+              <defs>
+                <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1c1917"/>
+                  <stop offset="100%" stop-color="#0b0a09"/>
+                </linearGradient>
+              </defs>
+              <rect width="800" height="1000" fill="url(#bg)"/>
+              <circle cx="400" cy="370" r="120" fill="#292524" stroke="#b8894a" stroke-width="2" stroke-opacity="0.45"/>
+              <path d="M210 820 C210 640, 590 640, 590 820" fill="#292524" stroke="#b8894a" stroke-width="2" stroke-opacity="0.45"/>
+              <text x="400" y="905" font-family="monospace" font-size="22" fill="#e4d6b7" text-anchor="middle" letter-spacing="4">HARSH KHINCHI</text>
+              <text x="400" y="940" font-family="monospace" font-size="14" fill="#a8a29e" text-anchor="middle">CLICK "UPDATE PFP" TO LOAD LOCAL PORTRAIT</text>
+            </svg>
+          `);
+          heroPfpImg.src = svgFallback;
+        });
+      }
+
+      const featuredVideo = document.getElementById('featured-animation-video');
+      const fallbackBanner = document.getElementById('video-fallback-banner');
+      if (featuredVideo) {
+        featuredVideo.addEventListener('error', () => {
+          fallbackBanner.classList.remove('hidden');
+        });
+      }
+
+      /* -------------------------------------------------------------------
+         3. RESUME SHOWCASE MODAL TRIGGERS
+         ------------------------------------------------------------------- */
+      const resumeModal = document.getElementById('resume-modal');
+      function openResumeModal() {
+        resumeModal.classList.remove('hidden');
+      }
+      function closeResumeModal() {
+        resumeModal.classList.add('hidden');
+      }
+
+      document.getElementById('corner-resume-widget').addEventListener('click', openResumeModal);
+      document.getElementById('nav-resume-btn').addEventListener('click', openResumeModal);
+      document.getElementById('hero-resume-btn').addEventListener('click', openResumeModal);
+      document.getElementById('section-resume-btn').addEventListener('click', openResumeModal);
+      document.getElementById('close-resume-btn').addEventListener('click', closeResumeModal);
+
+      /* -------------------------------------------------------------------
+         4. CONTACT COPY-TO-CLIPBOARD ACTIONS (USING execCommand FOR IFRAMES)
+         ------------------------------------------------------------------- */
+      function copyTextSafely(text, successMessage) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          const fb = document.getElementById('contact-feedback');
+          fb.textContent = successMessage;
+          fb.classList.remove('hidden');
+          setTimeout(() => fb.classList.add('hidden'), 3000);
+        } catch (err) {
+          console.error('Copy failed', err);
+        }
+        document.body.removeChild(textarea);
+      }
+
+      document.getElementById('copy-email-btn').addEventListener('click', () => {
+        copyTextSafely('harshkhinchi@example.com', '✓ Email copied to clipboard.');
+      });
+
+      document.getElementById('copy-inquiry-btn').addEventListener('click', () => {
+        const cardText = [
+          'Harsh Khinchi — B.Des Crafts & Design (IICD Jaipur)',
+          'Poet · Cutout & Stop-Motion Animator · Jaipur, Rajasthan, India',
+          'Email: harshkhinchi@example.com'
+        ].join('\n');
+        copyTextSafely(cardText, '✓ Contact details copied to clipboard.');
+      });
+
+      /* -------------------------------------------------------------------
+         5. WORK FILTER PILLS
+         ------------------------------------------------------------------- */
+      const filterBtns = document.querySelectorAll('.work-filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('bg-amber-500', 'text-zinc-950', 'font-semibold');
+            b.classList.add('bg-zinc-900', 'text-zinc-300');
+          });
+          btn.classList.add('bg-amber-500', 'text-zinc-950', 'font-semibold');
+          btn.classList.remove('bg-zinc-900', 'text-zinc-300');
+
+          const filter = btn.dataset.filter;
+          document.querySelectorAll('.work-card').forEach(card => {
+            if (filter === 'all' || card.dataset.category === filter) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      /* -------------------------------------------------------------------
+         6. POETRY-ONLY SKETCHBOOK DATA & 18-STRIP CURVED-LEAF ENGINE
+         ------------------------------------------------------------------- */
+      const basePoems = [
+        {
+          pageNum: '01',
+          tag: 'POEM I • JAIPUR',
+          title: 'Paper Boats of Jaipur',
+          subtitle: 'Monsoon Dusk • Johari Lanes',
+          stanzas: [
+            'We fold our sharpest hours into quiet paper boats,\nAnd set them down the sandstone lane where evening water floats.\nNo one asks what memory is inked beneath the crease,\nThey only watch the gentle drift and call the silence peace.',
+            'Yet every folded sheet recalls the scissors and the lamp—\nHow fragile things survive the storm when edges still are damp.'
+          ]
+        },
+        {
+          pageNum: '02',
+          tag: 'POEM II • MOTION',
+          title: 'Between Two Frames',
+          subtitle: '24fps Lightbox Study',
+          stanzas: [
+            'Twenty-four heartbeats trapped inside a second of light,\nEach shadow cut by steady hands in the middle of the night.\nWhat looks like effortless motion when projected on the wall,\nIs built from patient stillness where the paper shavings fall.',
+            'Hold the frame a breath too long—let silence speak its part;\nThe pause between two silhouettes is where the stories start.'
+          ]
+        },
+        {
+          pageNum: '03',
+          tag: 'POEM III • CRAFT',
+          title: 'Unfinished Stitch',
+          subtitle: '8×8 Textile Patch • IICD',
+          stanzas: [
+            'A cotton thread remembers every pull against the grain,\nThe tiny knot beneath the cloth that hides the needle’s strain.\nWe chase a seamless surface where no human hand appears,\nForgetting that the crooked seam is what outlasts the years.'
+          ]
+        },
+        {
+          pageNum: '04',
+          tag: 'POEM IV • HINDI NAZM',
+          title: 'Kaagaz Aur Roshni',
+          subtitle: 'कागज़ और रोशनी • रात की डायरी',
+          stanzas: [
+            'Raat ke sannate mein jab kalam thahar jaati hai,\nKhaali panne par ek nazm ubhar aati hai.\nJo lafz zubaan tak aate-aate ruk gaye the kahin,\nSyaahi unhein chupchaap amar kar jaati hai.',
+            'Har mod par ek naya kissa saans leta hai,\nPurana kaagaz hi naye kal ko aawaaz deta hai.'
+          ]
+        },
+        {
+          pageNum: '05',
+          tag: 'POEM V • NOCTURNE',
+          title: 'Midnight Ink',
+          subtitle: 'Notes Before Dawn',
+          stanzas: [
+            'At two a.m. the city trades its traffic for the wind,\nAnd every half-built metaphor comes back to be pinned.\nI keep a small brass loupe beside the margins of my page,\nTo read the quiet footnotes left by an unhurried age.'
+          ]
+        },
+        {
+          pageNum: '06',
+          tag: 'POEM VI • STAGE',
+          title: 'Mehfil-e-Khamoshi',
+          subtitle: 'महफ़िल-ए-ख़ामोशी • मंच के बाद',
+          stanzas: [
+            'Taaliyon ke shor ke baad jo sannata bachta hai,\nAsli shayar usi khamoshi mein khud ko rachta hai.\nLafz toh bas ek zariya hain dil tak pahunchne ka,\nAsar toh woh hai jo padhne ke baad bhi jachta hai.'
+          ]
+        }
+      ];
+
+      let allPoems = [...basePoems];
+      let currentSpread = 0;
+      let isAnimatingLeaf = false;
+      let currentZoom = 1.0;
+
+      const leftPageEl = document.getElementById('left-page');
+      const rightPageEl = document.getElementById('right-page');
+      const turningLeafEl = document.getElementById('turning-leaf');
+      const spreadIndicator = document.getElementById('spread-indicator');
+      const spreadDots = document.getElementById('spread-dots');
+      const prevBtn = document.getElementById('prev-spread-btn');
+      const nextBtn = document.getElementById('next-spread-btn');
+
+      function renderPoemPageHTML(poemData, side) {
+        if (!poemData) {
+          return `
+            <div class="h-full flex flex-col items-center justify-center text-center opacity-55">
+              <div class="font-mono text-xs tracking-[0.25em] uppercase text-amber-950">Blank Parchment Leaf</div>
+              <div class="w-12 h-[1px] bg-amber-900/40 my-3"></div>
+              <p class="font-serif italic text-sm text-amber-950 max-w-[210px]">
+                Add a new poem in your Studio Vault to fill this page.
+              </p>
+            </div>
+          `;
+        }
+
+        const stanzasHTML = poemData.stanzas.map(stanza => `
+          <p class="font-serif italic text-sm sm:text-base md:text-[17.5px] leading-[1.72] whitespace-pre-line text-[#2b2721] border-l-2 border-amber-800/35 pl-4">
+            ${stanza}
+          </p>
+        `).join('');
+
+        return `
+          <div class="space-y-4 overflow-hidden">
+            <div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-amber-900/80 border-b border-amber-900/15 pb-2">
+              <span>${poemData.tag}</span>
+              <span>LEAF ${poemData.pageNum}</span>
+            </div>
+
+            <div class="pt-1">
+              <h3 class="font-editorial italic text-2xl sm:text-3xl md:text-[2.2rem] font-normal text-[#1c1915] leading-tight">
+                ${poemData.title}
+              </h3>
+              <p class="font-mono text-[11px] text-amber-900/80 mt-1">${poemData.subtitle}</p>
+            </div>
+
+            <div class="space-y-4 pt-2">
+              ${stanzasHTML}
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-amber-900/15 flex items-center justify-between text-[10px] font-mono text-amber-950/70">
+            <span>${side === 'left' ? 'HARSH KHINCHI' : 'POETRY SKETCHBOOK'}</span>
+            <span>— ${poemData.pageNum} —</span>
+          </div>
+        `;
+      }
+
+      function renderSpread() {
+        const totalSpreads = Math.ceil(allPoems.length / 2);
+        if (currentSpread >= totalSpreads) currentSpread = Math.max(0, totalSpreads - 1);
+
+        const leftIdx = currentSpread * 2;
+        const rightIdx = leftIdx + 1;
+
+        leftPageEl.innerHTML = renderPoemPageHTML(allPoems[leftIdx], 'left');
+        rightPageEl.innerHTML = renderPoemPageHTML(allPoems[rightIdx], 'right');
+
+        spreadIndicator.textContent = `Spread ${currentSpread + 1} of ${totalSpreads} • Poems ${leftIdx + 1}–${Math.min(allPoems.length, rightIdx + 1)}`;
+        prevBtn.disabled = currentSpread === 0;
+        nextBtn.disabled = currentSpread >= totalSpreads - 1;
+
+        spreadDots.innerHTML = '';
+        for (let i = 0; i < totalSpreads; i++) {
+          const dot = document.createElement('button');
+          dot.className = `w-2 h-2 rounded-full transition-all ${i === currentSpread ? 'bg-amber-400 w-5' : 'bg-zinc-600 hover:bg-zinc-400'}`;
+          dot.title = `Go to Spread ${i + 1}`;
+          dot.addEventListener('click', () => {
+            if (i !== currentSpread && !isAnimatingLeaf) {
+              animatePageTurn(i > currentSpread ? 'next' : 'prev', i);
+            }
+          });
+          spreadDots.appendChild(dot);
+        }
+
+        syncLoupeClone();
+      }
+
+      function build18StripLeaf(frontPoemData, backPoemData, direction) {
+        const STRIP_COUNT = 18;
+        turningLeafEl.innerHTML = '';
+        turningLeafEl.style.left = direction === 'next' ? '50%' : '0%';
+        turningLeafEl.style.transformOrigin = direction === 'next' ? 'left center' : 'right center';
+
+        const spreadWidth = document.getElementById('book-spread').offsetWidth / 2;
+        const stripWidth = spreadWidth / STRIP_COUNT;
+
+        let parentEl = turningLeafEl;
+        const strips = [];
+
+        for (let i = 0; i < STRIP_COUNT; i++) {
+          const strip = document.createElement('div');
+          strip.className = i === 0 ? 'leaf-strip root-strip' : 'leaf-strip';
+          if (direction === 'prev') {
+            strip.style.transformOrigin = 'right center';
+            strip.style.left = i === 0 ? 'auto' : '-100%';
+            if (i === 0) strip.style.right = '0';
+          }
+
+          const frontFace = document.createElement('div');
+          frontFace.className = 'strip-face strip-face-front';
+          const frontInner = document.createElement('div');
+          frontInner.className = 'strip-inner-content';
+          frontInner.style.width = spreadWidth + 'px';
+          const offsetIdx = direction === 'next' ? i : (STRIP_COUNT - 1 - i);
+          frontInner.style.left = `-${offsetIdx * stripWidth}px`;
+          frontInner.innerHTML = renderPoemPageHTML(frontPoemData, direction === 'next' ? 'right' : 'left');
+          frontFace.appendChild(frontInner);
+
+          const backFace = document.createElement('div');
+          backFace.className = 'strip-face strip-face-back';
+          const backInner = document.createElement('div');
+          backInner.className = 'strip-inner-content';
+          backInner.style.width = spreadWidth + 'px';
+          const backOffsetIdx = direction === 'next' ? (STRIP_COUNT - 1 - i) : i;
+          backInner.style.left = `-${backOffsetIdx * stripWidth}px`;
+          backInner.innerHTML = renderPoemPageHTML(backPoemData, direction === 'next' ? 'left' : 'right');
+          backFace.appendChild(backInner);
+
+          strip.appendChild(frontFace);
+          strip.appendChild(backFace);
+          parentEl.appendChild(strip);
+          strips.push(strip);
+          parentEl = strip;
+        }
+
+        return strips;
+      }
+
+      function animatePageTurn(direction, targetSpreadOverride = null) {
+        const totalSpreads = Math.ceil(allPoems.length / 2);
+        const targetSpread = targetSpreadOverride !== null
+          ? targetSpreadOverride
+          : (direction === 'next' ? currentSpread + 1 : currentSpread - 1);
+
+        if (targetSpread < 0 || targetSpread >= totalSpreads || isAnimatingLeaf) return;
+        isAnimatingLeaf = true;
+
+        const currLeft = allPoems[currentSpread * 2];
+        const currRight = allPoems[currentSpread * 2 + 1];
+        const nextLeft = allPoems[targetSpread * 2];
+        const nextRight = allPoems[targetSpread * 2 + 1];
+
+        let strips;
+        if (direction === 'next') {
+          strips = build18StripLeaf(currRight, nextLeft, 'next');
+          rightPageEl.innerHTML = renderPoemPageHTML(nextRight, 'right');
+        } else {
+          strips = build18StripLeaf(currLeft, nextRight, 'prev');
+          leftPageEl.innerHTML = renderPoemPageHTML(nextLeft, 'left');
+        }
+
+        turningLeafEl.classList.add('active');
+
+        const duration = 760;
+        const startTime = performance.now();
+        const BETA = 0.60;
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const rawT = Math.min(1, elapsed / duration);
+          const ease = rawT < 0.5
+            ? 4 * rawT * rawT * rawT
+            : 1 - Math.pow(-2 * rawT + 2, 3) / 2;
+
+          const arch = Math.sin(Math.PI * ease);
+          const dirSign = direction === 'next' ? -1 : 1;
+
+          strips.forEach((strip, idx) => {
+            if (idx === 0) {
+              const baseAngle = dirSign * (ease * 180);
+              strip.style.transform = `rotateY(${baseAngle}deg)`;
+            } else {
+              const bendAngle = dirSign * arch * BETA * (idx < 9 ? 8.5 : -4.2);
+              strip.style.transform = `rotateY(${bendAngle}deg)`;
+            }
+          });
+
+          if (rawT < 1) {
+            requestAnimationFrame(step);
+          } else {
+            turningLeafEl.classList.remove('active');
+            turningLeafEl.innerHTML = '';
+            currentSpread = targetSpread;
+            isAnimatingLeaf = false;
+            renderSpread();
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      prevBtn.addEventListener('click', () => animatePageTurn('prev'));
+      nextBtn.addEventListener('click', () => animatePageTurn('next'));
+      document.getElementById('prev-corner').addEventListener('click', () => animatePageTurn('prev'));
+      document.getElementById('next-corner').addEventListener('click', () => animatePageTurn('next'));
+
+      window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+        if (e.key === 'ArrowRight') animatePageTurn('next');
+        if (e.key === 'ArrowLeft') animatePageTurn('prev');
+      });
+
+      /* -------------------------------------------------------------------
+         7. CURSOR-DRIVEN 3D TILT (TILT_X=4.5, TILT_Y=7) & ZOOM (90% - 145%)
+         ------------------------------------------------------------------- */
+      const stageEl = document.getElementById('sketchbook-stage');
+      const rigEl = document.getElementById('sketchbook-rig');
+      let tiltX = 0;
+      let tiltY = 0;
+
+      function applyRigTransform() {
+        rigEl.style.transform = `scale(${currentZoom}) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+      }
+
+      stageEl.addEventListener('mousemove', (e) => {
+        const rect = stageEl.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - 0.5;
+        const ny = (e.clientY - rect.top) / rect.height - 0.5;
+        tiltY = nx * 7;
+        tiltX = -ny * 4.5;
+        applyRigTransform();
+      });
+
+      stageEl.addEventListener('mouseleave', () => {
+        tiltX = 0;
+        tiltY = 0;
+        applyRigTransform();
+      });
+
+      document.getElementById('zoom-in-btn').addEventListener('click', () => {
+        currentZoom = Math.min(1.45, +(currentZoom + 0.1).toFixed(2));
+        document.getElementById('zoom-label').textContent = Math.round(currentZoom * 100) + '%';
+        applyRigTransform();
+      });
+
+      document.getElementById('zoom-out-btn').addEventListener('click', () => {
+        currentZoom = Math.max(0.90, +(currentZoom - 0.1).toFixed(2));
+        document.getElementById('zoom-label').textContent = Math.round(currentZoom * 100) + '%';
+        applyRigTransform();
+      });
+
+      /* -------------------------------------------------------------------
+         8. DRAGGABLE 2.3x BRASS MAGNIFYING LOUPE
+         ------------------------------------------------------------------- */
+      const loupeEl = document.getElementById('brass-loupe');
+      const loupeCloneStage = document.getElementById('loupe-clone-stage');
+      const toggleLoupeBtn = document.getElementById('toggle-loupe-btn');
+      const bookSpreadEl = document.getElementById('book-spread');
+      let loupeActive = false;
+
+      function syncLoupeClone() {
+        if (!loupeActive) return;
+        const w = bookSpreadEl.offsetWidth;
+        const h = bookSpreadEl.offsetHeight;
+        loupeCloneStage.style.width = w + 'px';
+        loupeCloneStage.style.height = h + 'px';
+        loupeCloneStage.innerHTML = `
+          <div style="display:grid; grid-template-columns:1fr 1fr; width:100%; height:100%; background:#ece7dc;">
+            <div class="parchment-page parchment-left">${leftPageEl.innerHTML}</div>
+            <div class="parchment-page parchment-right">${rightPageEl.innerHTML}</div>
+          </div>
+        `;
+        updateLoupeMagnification();
+      }
+
+      function updateLoupeMagnification() {
+        const zoomFactor = 2.3;
+        const lx = loupeEl.offsetLeft + loupeEl.offsetWidth / 2;
+        const ly = loupeEl.offsetTop + loupeEl.offsetHeight / 2;
+        const offsetX = (loupeEl.offsetWidth / 2) - lx * zoomFactor;
+        const offsetY = (loupeEl.offsetHeight / 2) - ly * zoomFactor;
+        loupeCloneStage.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${zoomFactor})`;
+      }
+
+      toggleLoupeBtn.addEventListener('click', () => {
+        loupeActive = !loupeActive;
+        loupeEl.classList.toggle('active', loupeActive);
+        toggleLoupeBtn.classList.toggle('bg-amber-500', loupeActive);
+        toggleLoupeBtn.classList.toggle('text-zinc-950', loupeActive);
+        if (loupeActive) syncLoupeClone();
+      });
+
+      let isDraggingLoupe = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let loupeStartLeft = 0;
+      let loupeStartTop = 0;
+
+      function startLoupeDrag(clientX, clientY) {
+        isDraggingLoupe = true;
+        dragStartX = clientX;
+        dragStartY = clientY;
+        loupeStartLeft = loupeEl.offsetLeft;
+        loupeStartTop = loupeEl.offsetTop;
+      }
+
+      function moveLoupeDrag(clientX, clientY) {
+        if (!isDraggingLoupe) return;
+        const maxLeft = bookSpreadEl.offsetWidth - loupeEl.offsetWidth;
+        const maxTop = bookSpreadEl.offsetHeight - loupeEl.offsetHeight;
+        const nextLeft = Math.max(0, Math.min(maxLeft, loupeStartLeft + (clientX - dragStartX)));
+        const nextTop = Math.max(0, Math.min(maxTop, loupeStartTop + (clientY - dragStartY)));
+        loupeEl.style.left = nextLeft + 'px';
+        loupeEl.style.top = nextTop + 'px';
+        updateLoupeMagnification();
+      }
+
+      loupeEl.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        startLoupeDrag(e.clientX, e.clientY);
+      });
+      window.addEventListener('mousemove', (e) => moveLoupeDrag(e.clientX, e.clientY));
+      window.addEventListener('mouseup', () => { isDraggingLoupe = false; });
+
+      loupeEl.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        startLoupeDrag(t.clientX, t.clientY);
+      }, { passive: true });
+      window.addEventListener('touchmove', (e) => {
+        if (!isDraggingLoupe) return;
+        const t = e.touches[0];
+        moveLoupeDrag(t.clientX, t.clientY);
+      }, { passive: true });
+      window.addEventListener('touchend', () => { isDraggingLoupe = false; });
+
+      /* -------------------------------------------------------------------
+         9. DISTRACTION-FREE POETRY READER MODAL
+         ------------------------------------------------------------------- */
+      const readerModal = document.getElementById('reader-modal');
+      document.getElementById('open-reader-btn').addEventListener('click', () => {
+        const p1 = allPoems[currentSpread * 2];
+        const p2 = allPoems[currentSpread * 2 + 1];
+        document.getElementById('reader-category').textContent = `${p1 ? p1.tag : ''} ${p2 ? '• ' + p2.tag : ''}`;
+        document.getElementById('reader-title').textContent = `${p1 ? p1.title : ''}${p2 ? ' & ' + p2.title : ''}`;
+
+        let html = '';
+        [p1, p2].forEach(p => {
+          if (!p) return;
+          html += `<div class="pb-6 border-b border-amber-900/15 last:border-none">
+            <h4 class="font-editorial italic text-3xl text-ink mb-1">${p.title}</h4>
+            <p class="text-xs font-mono text-amber-900 mb-4">${p.subtitle}</p>
+            ${p.stanzas.map(s => `<p class="italic whitespace-pre-line border-l-2 border-amber-800/40 pl-4 mb-4">${s}</p>`).join('')}
+          </div>`;
+        });
+        document.getElementById('reader-body').innerHTML = html;
+        readerModal.classList.remove('hidden');
+      });
+
+      document.getElementById('close-reader-btn').addEventListener('click', () => {
+        readerModal.classList.add('hidden');
+      });
+
+      /* -------------------------------------------------------------------
+         10. OWNER-ONLY PRIVATE STUDIO VAULT (PIN-PROTECTED INDEXEDDB)
+         ------------------------------------------------------------------- */
+      const DB_NAME = 'HarshPrivateStudioVaultDB_v3';
+      const DB_VERSION = 1;
+      const STORE_NAME = 'privateAssets';
+      const PASSCODE_KEY = 'hk_studio_vault_pin';
+      let isVaultUnlocked = false;
+
+      function getStoredPin() {
+        return localStorage.getItem(PASSCODE_KEY) || '2026';
+      }
+
+      function openVaultDB() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+              db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function saveAssetToDB(record) {
+        const db = await openVaultDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).add(record);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      }
+
+      async function getAllAssetsFromDB() {
+        const db = await openVaultDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const req = tx.objectStore(STORE_NAME).getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => reject(req.error);
+        });
+      }
+
+      async function deleteAssetFromDB(id) {
+        const db = await openVaultDB();
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).delete(id);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      }
+
+      function showVaultToast(msg) {
+        const toast = document.getElementById('vault-status-toast');
+        toast.textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3500);
+      }
+
+      async function refreshPrivateOwnerAssets() {
+        const items = await getAllAssetsFromDB();
+        const listEl = document.getElementById('vault-items-list');
+        const privateWorksContainer = document.getElementById('private-works-container');
+
+        allPoems = [...basePoems];
+        privateWorksContainer.innerHTML = '';
+
+        if (!isVaultUnlocked) {
+          privateWorksContainer.classList.add('hidden');
+          renderSpread();
+          return;
+        }
+
+        if (items.length === 0) {
+          listEl.innerHTML = '<p class="text-xs text-zinc-500 italic">No private items saved yet.</p>';
+          privateWorksContainer.classList.add('hidden');
+          renderSpread();
+          return;
+        }
+
+        listEl.innerHTML = '';
+        let hasPrivateWorkCards = false;
+
+        items.forEach((item) => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between gap-3 p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs';
+          row.innerHTML = `
+            <div class="truncate">
+              <span class="font-semibold text-zinc-200">${item.title}</span>
+              <span class="ml-2 text-[10px] font-mono text-amber-400">[${item.kind.toUpperCase()}]</span>
+            </div>
+            <button data-del-id="${item.id}" class="del-vault-item px-2.5 py-1 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 font-mono text-[11px]">
+              Delete
+            </button>
+          `;
+          listEl.appendChild(row);
+
+          if (item.kind === 'pfp' && item.blob) {
+            heroPfpImg.src = URL.createObjectURL(item.blob);
+          } else if (item.kind === 'animation' && item.blob) {
+            featuredVideo.src = URL.createObjectURL(item.blob);
+            fallbackBanner.classList.add('hidden');
+          } else if (item.kind === 'reel' && item.blob) {
+            hasPrivateWorkCards = true;
+            const url = URL.createObjectURL(item.blob);
+            const isVideo = item.mime && item.mime.startsWith('video/');
+            const card = document.createElement('article');
+            card.className = 'rounded-3xl overflow-hidden bg-charcoal border border-emerald-500/30 p-4 flex flex-col justify-between';
+            card.innerHTML = `
+              <div class="aspect-video rounded-2xl overflow-hidden bg-black mb-3">
+                ${isVideo
+                  ? `<video src="${url}" controls playsinline class="w-full h-full object-contain"></video>`
+                  : `<img src="${url}" alt="${item.title}" class="w-full h-full object-cover" />`
+                }
+              </div>
+              <div>
+                <span class="text-[10px] font-mono text-emerald-400 uppercase">PRIVATE STUDIO VAULT</span>
+                <h4 class="text-base font-bold text-white mt-0.5">${item.title}</h4>
+              </div>
+            `;
+            privateWorksContainer.appendChild(card);
+          } else if (item.kind === 'poem') {
+            allPoems.push({
+              pageNum: String(allPoems.length + 1).padStart(2, '0'),
+              tag: 'PRIVATE VERSE',
+              title: item.title,
+              subtitle: item.subtitle || 'Private Studio Notebook',
+              stanzas: item.body.split(/\n\s*\n/).filter(Boolean)
+            });
+          }
+        });
+
+        privateWorksContainer.classList.toggle('hidden', !hasPrivateWorkCards);
+
+        document.querySelectorAll('.del-vault-item').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = Number(btn.dataset.delId);
+            await deleteAssetFromDB(id);
+            showVaultToast('Deleted from your local Studio Vault.');
+            await refreshPrivateOwnerAssets();
+          });
+        });
+
+        renderSpread();
+      }
+
+      const vaultModal = document.getElementById('vault-modal');
+      const vaultLockScreen = document.getElementById('vault-lock-screen');
+      const vaultWorkspace = document.getElementById('vault-workspace');
+
+      function openVaultModal(preselectTarget = null) {
+        vaultModal.classList.remove('hidden');
+        if (preselectTarget) {
+          document.getElementById('local-media-target').value = preselectTarget;
+        }
+        if (isVaultUnlocked) {
+          vaultLockScreen.classList.add('hidden');
+          vaultWorkspace.classList.remove('hidden');
+        } else {
+          vaultLockScreen.classList.remove('hidden');
+          vaultWorkspace.classList.add('hidden');
+          document.getElementById('vault-passcode-input').value = '';
+          document.getElementById('vault-error-msg').classList.add('hidden');
+        }
+      }
+
+      document.getElementById('nav-vault-btn').addEventListener('click', () => openVaultModal());
+      document.getElementById('footer-vault-btn').addEventListener('click', () => openVaultModal());
+      document.getElementById('inline-vault-link').addEventListener('click', () => openVaultModal());
+      document.getElementById('quick-pfp-swap-btn').addEventListener('click', () => openVaultModal('pfp'));
+      document.getElementById('fallback-load-video-btn').addEventListener('click', () => openVaultModal('animation'));
+
+      document.getElementById('close-vault-btn').addEventListener('click', () => {
+        vaultModal.classList.add('hidden');
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'u') {
+          e.preventDefault();
+          openVaultModal();
+        }
+      });
+
+      async function handleUnlock() {
+        const entered = document.getElementById('vault-passcode-input').value.trim();
+        if (entered === getStoredPin()) {
+          isVaultUnlocked = true;
+          vaultLockScreen.classList.add('hidden');
+          vaultWorkspace.classList.remove('hidden');
+          document.getElementById('vault-dot').classList.replace('bg-amber-400', 'bg-emerald-400');
+          document.getElementById('vault-btn-label').textContent = 'Vault Unlocked';
+          await refreshPrivateOwnerAssets();
+        } else {
+          document.getElementById('vault-error-msg').classList.remove('hidden');
+        }
+      }
+
+      document.getElementById('unlock-vault-btn').addEventListener('click', handleUnlock);
+      document.getElementById('vault-passcode-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleUnlock();
+      });
+
+      document.getElementById('lock-vault-btn').addEventListener('click', async () => {
+        isVaultUnlocked = false;
+        document.getElementById('vault-dot').classList.replace('bg-emerald-400', 'bg-amber-400');
+        document.getElementById('vault-btn-label').textContent = 'Studio Vault';
+        vaultModal.classList.add('hidden');
+        await refreshPrivateOwnerAssets();
+      });
+
+      document.getElementById('save-passcode-btn').addEventListener('click', () => {
+        const newPin = document.getElementById('new-passcode-input').value.trim();
+        if (newPin.length >= 4) {
+          localStorage.setItem(PASSCODE_KEY, newPin);
+          document.getElementById('new-passcode-input').value = '';
+          showVaultToast('Owner passcode updated in this browser.');
+        } else {
+          showVaultToast('Please enter at least 4 characters for your PIN.');
+        }
+      });
+
+      document.getElementById('save-poem-btn').addEventListener('click', async () => {
+        const title = document.getElementById('private-poem-title').value.trim();
+        const subtitle = document.getElementById('private-poem-subtitle').value.trim();
+        const body = document.getElementById('private-poem-body').value.trim();
+
+        if (!title || !body) {
+          showVaultToast('Please enter both a poem title and stanzas.');
+          return;
+        }
+
+        await saveAssetToDB({
+          kind: 'poem',
+          title: title,
+          subtitle: subtitle,
+          body: body,
+          createdAt: Date.now()
+        });
+
+        document.getElementById('private-poem-title').value = '';
+        document.getElementById('private-poem-subtitle').value = '';
+        document.getElementById('private-poem-body').value = '';
+        showVaultToast('Poem added to your 3D Poetry Sketchbook!');
+        await refreshPrivateOwnerAssets();
+        currentSpread = Math.ceil(allPoems.length / 2) - 1;
+        renderSpread();
+      });
+
+      document.getElementById('upload-media-btn').addEventListener('click', async () => {
+        const fileInput = document.getElementById('local-file-input');
+        const titleInput = document.getElementById('local-media-title');
+        const target = document.getElementById('local-media-target').value;
+
+        if (!fileInput.files || !fileInput.files[0]) {
+          showVaultToast('Please choose a video or image file first.');
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const title = titleInput.value.trim() || file.name;
+
+        await saveAssetToDB({
+          kind: target,
+          title: title,
+          mime: file.type,
+          blob: file,
+          createdAt: Date.now()
+        });
+
+        fileInput.value = '';
+        titleInput.value = '';
+        showVaultToast('Saved privately to your local Studio Vault.');
+        await refreshPrivateOwnerAssets();
+      });
+
+      /* -------------------------------------------------------------------
+         11. INTERACTIVE RAW VS REAL COMPARISON SLIDER
+         ------------------------------------------------------------------- */
+      const compareBox = document.getElementById('compare-box');
+      const compareRaw = document.getElementById('compare-raw-layer');
+      const compareHandle = document.getElementById('compare-handle');
+      let isSliding = false;
+
+      function updateCompareSlider(clientX) {
+        const rect = compareBox.getBoundingClientRect();
+        const pct = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100));
+        compareRaw.style.width = pct + '%';
+        compareHandle.style.left = pct + '%';
+      }
+
+      compareBox.addEventListener('mousedown', (e) => { isSliding = true; updateCompareSlider(e.clientX); });
+      window.addEventListener('mousemove', (e) => { if (isSliding) updateCompareSlider(e.clientX); });
+      window.addEventListener('mouseup', () => { isSliding = false; });
+
+      compareBox.addEventListener('touchstart', (e) => { isSliding = true; updateCompareSlider(e.touches[0].clientX); }, { passive: true });
+      window.addEventListener('touchmove', (e) => { if (isSliding) updateCompareSlider(e.touches[0].clientX); }, { passive: true });
+      window.addEventListener('touchend', () => { isSliding = false; });
+
+      // Initial Render
+      renderSpread();
+    })();
+  </script>
+</body>
+</html>
